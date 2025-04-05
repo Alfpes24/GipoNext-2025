@@ -1,1 +1,215 @@
-/* Contenuto CSS come descritto nel messaggio precedente */
+/* Reset base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f4f8fb;
+  font-family: 'Inter', sans-serif;
+  color: #2c3e50;
+}
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.logo-icon {
+  background-color: #009ca6;
+  color: #fff;
+  border-radius: 50%;
+  padding: 6px 12px;
+}
+
+.logo-text {
+  color: #2c3e50;
+}
+
+/* Header */
+.header h1 {
+  font-size: 20px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #009ca6;
+}
+
+.intro {
+  font-size: 14px;
+  margin: 12px 0 24px;
+  color: #555;
+}
+
+/* Form */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+  font-size: 15px;
+}
+
+input[type="number"], select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.checkbox-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Pulsanti */
+button {
+  font-size: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #009ca6;
+  color: white;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.btn-primary:hover {
+  background-color: #007d89;
+}
+
+/* Sezione OFFERTA */
+.sconto-panel {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.titolo-sezione {
+  color: #007c91;
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.card-offerta {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.etichetta {
+  font-size: 16px;
+  color: #004d5c;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.prezzo-listino {
+  font-size: 40px;
+  font-weight: 700;
+  color: #007c91;
+  margin-bottom: 20px;
+}
+
+.offerta-box {
+  background-color: #009ca6;
+  color: white;
+  padding: 10px 0;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.etichetta-offerta {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.prezzo-offerta {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 5px 0 10px;
+}
+
+/* Loader / attesa */
+.promo-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #004d5c;
+  margin-top: 16px;
+}
+
+.spinner-mini {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #d0e7ea;
+  border-top-color: #009ca6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Firma */
+.firma-box {
+  margin-top: 30px;
+}
+
+.firma-btn {
+  background-color: #007c91;
+  color: white;
+  padding: 14px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+}
+
+.firma-btn:hover {
+  background-color: #006d7a;
+}
+
+.firma-logo {
+  font-family: Arial, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  background: url('https://seeklogo.com/images/D/docusign-logo-7B1F3A1A4F-seeklogo.com.png') no-repeat left center;
+  background-size: 18px;
+  padding-left: 24px;
+}
