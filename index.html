@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preventivo GipoNext</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">G</span>
+        <span class="logo-text">GipoNext</span>
+      </div>
+      <h1><i class="fa-solid fa-calculator"></i> Calcola il tuo preventivo</h1>
+      <p class="intro">Personalizza la configurazione e scopri subito il canone e i costi una tantum.</p>
+    </header>
+
+    <section class="config">
+      <div class="form-group">
+        <label for="rooms"><i class="fa-solid fa-door-closed"></i> Numero sale</label>
+        <input type="number" id="rooms" placeholder="Es. 3">
+      </div>
+
+      <div class="form-group">
+        <label for="doctors"><i class="fa-solid fa-user-doctor"></i> Numero medici</label>
+        <input type="number" id="doctors" placeholder="Es. 5">
+      </div>
+
+      <div class="form-group">
+        <label for="bundle"><i class="fa-solid fa-box"></i> Seleziona il bundle</label>
+        <select id="bundle">
+          <option value="start">Start</option>
+          <option value="plus">Plus</option>
+          <option value="top">Top</option>
+        </select>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label><i class="fa-solid fa-check-square"></i> Funzionalità aggiuntive</label>
+        <label><input type="checkbox" id="crm"> CRM</label>
+        <label><input type="checkbox" id="tablet"> Tablet</label>
+        <label><input type="checkbox" id="ts"> Lettore Tessera Sanitaria</label>
+      </div>
+
+      <button id="calcola" class="btn-primary">Calcola preventivo</button>
+    </section>
+
+    <section class="sconto-panel" id="sconto-panel" style="display: none;">
+      <h2 class="titolo-sezione">PREVENTIVO</h2>
+      <div class="card-offerta">
+        <p class="etichetta">Totale</p>
+        <p class="prezzo-listino" id="listino-finale">€500</p>
+        <div class="offerta-box">
+          <p class="etichetta-offerta">OFFERTA RISERVATA</p>
+          <p class="prezzo-offerta" id="promo-finale">€450</p>
+        </div>
+        <div class="promo-loader">
+          <div class="spinner-mini"></div>
+          <span>Verifico le promozioni...</span>
+        </div>
+      </div>
+      <div class="firma-box">
+        <button class="firma-btn">
+          <span>Firma</span>
+          <span class="firma-logo">DocuSign</span>
+        </button>
+      </div>
+    </section>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
