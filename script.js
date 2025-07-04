@@ -1,258 +1,318 @@
-// script.js
-// Gestione completa preventivatore + generazione PDF personalizzato
+:root {
+  --font: 'Inter', sans-serif;
+  --bg: #f7fafc;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --primary: #009ca6;
+  --primary-dark: #007d89;
+  --promo: #fef3c7;
+  --danger: #e11d48;
+  --border: #e5e7eb;
+  --radius: 10px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
-// ———————————————————————————————
-// CONFIGURAZIONE PREZZI BASE
-// ———————————————————————————————
-const prezzi = {
-  starter: { solo: [109,99,89,69,59,49,29,19], crm: [119,109,99,79,69,59,39,29] },
-  plus:    { solo: [144,134,124,104,84,74,64,54], crm: [154,144,134,114,94,84,74,64] },
-  vip:     { solo: [154,144,134,114,94,84,74,64], crm: [164,154,144,124,104,94,84,74] }
-};
-const setupFees = [500,500,500,500,750,750,750,1000];
-const soglie = [1,2,4,6,8,10,15,20];
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-// ———————————————————————————————
-// UTILITY
-// ———————————————————————————————
-function getIndiceStanze(n) {
-  for (let i = 0; i < soglie.length; i++) {
-    if (n <= soglie[i]) return i;
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 24px;
+}
+
+/* === Layout principale === */
+.layout-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
+}
+
+.presentation {
+  flex: 0 0 50%;
+  max-width: 50%;
+}
+
+.form-box {
+  flex: 0 0 50%;
+  max-width: 50%;
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+/* === Responsive mobile === */
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
   }
-  return soglie.length - 1;
-}
-
-function toggleModal(id, show) {
-  document.getElementById(id).classList[show ? 'remove' : 'add']('hidden');
-}
-
-function mostraErrore(msg) {
-  const form = document.getElementById('calculator-form');
-  const div = document.createElement('div');
-  div.textContent = msg;
-  div.style.cssText = 'color:red;font-weight:bold;text-align:center;margin:12px 0';
-  form.prepend(div);
-  setTimeout(()=>div.remove(),3000);
-}
-
-// ———————————————————————————————
-// CALCOLO PREVENTIVO
-// ———————————————————————————————
-function calcolaPreventivo() {
-  const stanze  = parseInt(document.getElementById('rooms').value)  || 0;
-  const medici  = parseInt(document.getElementById('doctors').value)|| 0;
-  const bundle  = document.getElementById('bundle').value;
-  const crm     = document.getElementById('crm').checked;
-  const tablet  = document.getElementById('tabletFirma').checked;
-  const lettore = document.getElementById('lettoreTessera').checked;
-
-  if (!stanze || !medici) {
-    mostraErrore('Inserisci valori validi per ambulatori e medici');
-    return;
-  }
-
-  // base tariffa
-  const idx = getIndiceStanze(stanze);
-  let unit = prezzi[bundle][ crm ? 'crm' : 'solo' ][idx];
-  // sconto se pochi medici
-  if (medici / stanze <= 1.3) unit /= 1.5;
-
-  const canoneReale = unit * stanze;
-  const setupReale  = setupFees[idx];
-
-  // opzionali fissi
-  const tabletFee  = tablet  ? 429 : 0;
-  const lettoreFee = lettore ?  79 : 0;
-
-  // add-on variabili
-  const addons = Array.from(document.querySelectorAll('.addon:checked'))
-    .map(el=>({
-      name : el.dataset.name,
-      price: parseFloat(el.dataset.price)||0,
-      setup: parseFloat(el.dataset.setup)||0
-    }));
-  const addonMens = addons.reduce((s,a)=> s + a.price, 0);
-  const addonSetup= addons.reduce((s,a)=> s + a.setup, 0);
-
-  // prezzi a listino con maggiorazione 25% e setup x2
-  const canoneListino = (canoneReale + addonMens) * 1.25;
-  const setupListino  = (setupReale + addonSetup)  * 2;
-  const totaleListino = setupListino + tabletFee + lettoreFee;
-  const totaleReale   = setupReale + addonSetup + tabletFee + lettoreFee;
-
-  // salvo per PDF
-  window._preventivo = {
-    // sezione Dati Struttura
-    nomeStruttura: '',
-    referente:    '',
-    email:        '',
-    telefono:     '',
-    // sezione Base
-    rooms:        stanze,
-    doctors:      medici,
-    bundle,
-    crm, tablet, lettore,
-    // addon
-    addons:       addons.map(a=>a.name),
-    // prezzi
-    canoneReale, setupReale,
-    addonMens, addonSetup,
-    canoneListino, setupListino, totaleListino, totaleReale
-  };
-
-  // aggiorno DOM
-  document.getElementById('monthly-list-price').textContent = `${canoneListino.toFixed(2)} €`;
-  document.getElementById('setup-list-price').textContent   = `${setupListino.toFixed(2)} €`;
-  document.getElementById('setup-total').textContent       = `${totaleListino.toFixed(2)} €`;
-  document.getElementById('listino-panel').classList.remove('hidden');
-  document.getElementById('generate-pdf-btn').classList.remove('hidden');
-  toggleModal('addon-modal', false);
-}
-
-// ———————————————————————————————
-// SIMULAZIONE PROMOZIONE
-// ———————————————————————————————
-function avviaVerifica() {
-  const spinner = document.getElementById('loading-spinner');
-  const countdownEl = document.getElementById('countdown');
-  const bar = document.getElementById('progressBar');
-
-  spinner.classList.remove('hidden');
-  document.getElementById('dettaglio-panel').classList.add('hidden');
-  bar.style.width = '0%';
-
-  let progress = 0;
-  const anim = setInterval(()=>{
-    progress += 100/150;
-    bar.style.width = `${progress}%`;
-    if (progress>=100) clearInterval(anim);
-  },100);
-
-  let secs = 15;
-  countdownEl.textContent = `Attendere ${secs}s...`;
-  const timer = setInterval(()=>{
-    secs--;
-    countdownEl.textContent = `Attendere ${secs}s...`;
-    if (secs<=0) {
-      clearInterval(timer);
-      spinner.classList.add('hidden');
-      mostraOffertaRiservata();
-    }
-  },1000);
-}
-
-function mostraOffertaRiservata() {
-  const d = window._preventivo;
-  document.getElementById('default-monthly-price').textContent = `${d.canoneReale.toFixed(2)} €`;
-  document.getElementById('list-monthly-crossed').textContent = `${d.canoneListino.toFixed(2)} €`;
-  document.getElementById('setup-fee').textContent           = `${d.setupReale.toFixed(2)} €`;
-  document.getElementById('list-setup-crossed').textContent = `${d.setupListino.toFixed(2)} €`;
-
-  document.getElementById('dettaglio-panel').classList.remove('hidden');
-  document.getElementById('dettaglio-panel').scrollIntoView({behavior:'smooth'});
-}
-
-// ———————————————————————————————
-// GENERAZIONE PDF
-// ———————————————————————————————
-async function confermaGenerazionePDF() {
-  // prendo i dati extra dal form
-  const nomeS = document.getElementById('nomeStruttura').value.trim();
-  const ref   = document.getElementById('nomeReferente').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const tel   = document.getElementById('telefono').value.trim();
-
-  if(!nomeS||!ref||!email||!tel) {
-    mostraErrore('Compila tutti i campi per il PDF (Struttura, Referente, Email, Telefono)');
-    return;
-  }
-  toggleModal('pdf-modal', false);
-
-  // aggiorno dati globali
-  Object.assign(window._preventivo, {
-    nomeStruttura: nomeS,
-    referente: ref,
-    email, telefono: tel
-  });
-
-  await generaPDF(window._preventivo);
-}
-
-async function generaPDF(d) {
-  try {
-    // carica il PDF modello
-    const url = 'preventivo.pdf';
-    const existingBytes = await fetch(url).then(r=>r.arrayBuffer());
-    const pdfDoc = await PDFLib.PDFDocument.load(existingBytes);
-    const form   = pdfDoc.getForm();
-
-    // 1. Dati Struttura
-    form.getTextField('nome_struttura').setText(d.nomeStruttura);
-    form.getTextField('referente').setText(d.referente);
-    form.getTextField('email').setText(d.email);
-    form.getTextField('telefono').setText(d.telefono);
-
-    // 2. Configurazione Base
-    form.getTextField('n_ambulatori').setText(d.rooms.toString());
-    form.getTextField('n_medici').setText(d.doctors.toString());
-    form.getTextField('versione_gipo').setText(d.bundle.toUpperCase());
-    form.getTextField('crm_incluso').setText(d.crm ? 'Sì' : 'No');
-    form.getTextField('tablet_firma').setText(d.tablet ? 'Sì' : 'No');
-    form.getTextField('lettore_ts').setText(d.lettore ? 'Sì' : 'No');
-
-    // 3. Moduli Aggiuntivi
-    form.getTextField('moduli_aggiuntivi').setText(d.addons.join(', ') || '-');
-
-    // 4. Prezzi di Listino
-    form.getTextField('canone_listino').setText(d.canoneListino.toFixed(2));
-    form.getTextField('setup_listino').setText(d.setupListino.toFixed(2));
-    form.getTextField('totale_setup_listino').setText(d.totaleListino.toFixed(2));
-
-    // 5. Offerta Riservata
-    form.getTextField('canone_promozionale').setText(d.canoneReale.toFixed(2));
-    form.getTextField('setup_scontato').setText(d.setupReale.toFixed(2));
-    form.getTextField('totale_setup_reale').setText(d.totaleReale.toFixed(2));
-
-    // 6. Dettaglio Sconti (puoi personalizzare)
-    form.getTextField('sconti_attivi').setText('–');
-    form.getTextField('scadenza_offerta').setText(new Date(Date.now()+7*24*3600e3).toLocaleDateString('it-IT'));
-
-    // 7. Totale Preventivo
-    form.getTextField('totale_preventivo_mensile').setText((d.canoneReale).toFixed(2));
-
-    // 8. Note Aggiuntive
-    form.getTextField('note_aggiuntive').setText('-');
-
-    // 9. Firma e Accettazione
-    const today = new Date();
-    form.getTextField('luogo').setText('Firma in Sede');
-    form.getTextField('data').setText(today.toLocaleDateString('it-IT'));
-    form.getTextField('firma_referente').setText(d.referente);
-
-    // salva e download
-    const pdfBytes = await pdfDoc.save();
-    const blob     = new Blob([pdfBytes], { type: 'application/pdf' });
-    const link     = document.createElement('a');
-    link.href      = URL.createObjectURL(blob);
-    link.download  = `Preventivo_${d.nomeStruttura}.pdf`;
-    link.click();
-    URL.revokeObjectURL(link.href);
-
-  } catch (err) {
-    console.error(err);
-    mostraErrore('Errore generazione PDF');
+  .presentation,
+  .form-box {
+    max-width: 100%;
+    flex: 0 0 100%;
   }
 }
 
-// ———————————————————————————————
-// INIT
-// ———————————————————————————————
-window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('calculate-btn').addEventListener('click', calcolaPreventivo);
-  document.getElementById('addon-btn').addEventListener('click', ()=> toggleModal('addon-modal', true));
-  document.getElementById('close-addon').addEventListener('click', ()=> toggleModal('addon-modal', false));
-  document.getElementById('check-btn').addEventListener('click', avviaVerifica);
-  document.getElementById('generate-pdf-btn').addEventListener('click', ()=> toggleModal('pdf-modal', true));
-  document.getElementById('annulla-pdf').addEventListener('click', ()=> toggleModal('pdf-modal', false));
-  document.getElementById('conferma-pdf').addEventListener('click', confermaGenerazionePDF);
-});
+/* === Presentazione === */
+.logo {
+  width: 160px;
+  margin-bottom: 20px;
+}
+
+.presentation h1 {
+  font-size: 26px;
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.lead {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.features {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+.features li {
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--promo);
+  color: #92400e;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* === Form preventivo === */
+.form-box h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #f9fafb;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox input {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+}
+
+/* === Pulsanti === */
+.btn-primary,
+.btn-outline {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius);
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-outline {
+  background: white;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.full {
+  width: 100%;
+}
+
+/* === Pannelli === */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.crossed {
+  text-decoration: line-through;
+  color: var(--muted);
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+.promo-price {
+  color: var(--primary-dark);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.bonus {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.timer {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* === Barra di caricamento === */
+.progress-container {
+  width: 100%;
+  height: 14px;
+  background-color: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary);
+  transition: width 0.2s linear;
+}
+
+.verifica-msg {
+  font-size: 16px;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.loader-icon {
+  margin-right: 6px;
+}
+
+/* === Popup Add-On & PDF === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: var(--primary-dark);
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.modal-content input[type="checkbox"],
+.modal-content input[type="text"] {
+  margin-right: 8px;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.modal-content input[type="text"] {
+  width: 100%;
+  margin-bottom: 12px;
+}
