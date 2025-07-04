@@ -1,215 +1,318 @@
-/* Reset base */
-body {
+:root {
+  --font: 'Inter', sans-serif;
+  --bg: #f7fafc;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --primary: #009ca6;
+  --primary-dark: #007d89;
+  --promo: #fef3c7;
+  --danger: #e11d48;
+  --border: #e5e7eb;
+  --radius: 10px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  background-color: #f4f8fb;
-  font-family: 'Inter', sans-serif;
-  color: #2c3e50;
 }
 
-.container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding: 24px;
 }
 
-/* Logo */
-.logo {
+/* === Layout principale === */
+.layout-container {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto 40px auto;
 }
 
-.logo-icon {
-  background-color: #009ca6;
-  color: #fff;
-  border-radius: 50%;
-  padding: 6px 12px;
+.presentation {
+  flex: 0 0 50%;
+  max-width: 50%;
 }
 
-.logo-text {
-  color: #2c3e50;
+.form-box {
+  flex: 0 0 50%;
+  max-width: 50%;
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
 }
 
-/* Header */
-.header h1 {
-  font-size: 20px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #009ca6;
-}
-
-.intro {
-  font-size: 14px;
-  margin: 12px 0 24px;
-  color: #555;
-}
-
-/* Form */
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  font-weight: 500;
-  margin-bottom: 6px;
-  display: block;
-  font-size: 15px;
-}
-
-input[type="number"], select {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.checkbox-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 14px;
-}
-
-/* Pulsanti */
-button {
-  font-size: 15px;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-primary {
-  background-color: #009ca6;
-  color: white;
-  font-weight: 600;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.btn-primary:hover {
-  background-color: #007d89;
-}
-
-/* Sezione OFFERTA */
-.sconto-panel {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.titolo-sezione {
-  color: #007c91;
-  font-size: 18px;
-  letter-spacing: 1px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.card-offerta {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-}
-
-.etichetta {
-  font-size: 16px;
-  color: #004d5c;
-  font-weight: 500;
-  margin-bottom: 5px;
-}
-
-.prezzo-listino {
-  font-size: 40px;
-  font-weight: 700;
-  color: #007c91;
-  margin-bottom: 20px;
-}
-
-.offerta-box {
-  background-color: #009ca6;
-  color: white;
-  padding: 10px 0;
-  border-radius: 12px;
-  margin-bottom: 20px;
-}
-
-.etichetta-offerta {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.prezzo-offerta {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 5px 0 10px;
-}
-
-/* Loader / attesa */
-.promo-loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 14px;
-  color: #004d5c;
-  margin-top: 16px;
-}
-
-.spinner-mini {
-  width: 18px;
-  height: 18px;
-  border: 3px solid #d0e7ea;
-  border-top-color: #009ca6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+/* === Responsive mobile === */
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column;
+  }
+  .presentation,
+  .form-box {
+    max-width: 100%;
+    flex: 0 0 100%;
   }
 }
 
-/* Firma */
-.firma-box {
-  margin-top: 30px;
+/* === Presentazione === */
+.logo {
+  width: 160px;
+  margin-bottom: 20px;
 }
 
-.firma-btn {
-  background-color: #007c91;
-  color: white;
-  padding: 14px 24px;
-  font-size: 18px;
+.presentation h1 {
+  font-size: 26px;
+  color: var(--primary);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.lead {
+  font-size: 15px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.features {
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+.features li {
+  font-size: 15px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--promo);
+  color: #92400e;
+  padding: 6px 12px;
+  border-radius: var(--radius);
   font-weight: 600;
-  border-radius: 12px;
+  font-size: 14px;
+}
+
+/* === Form preventivo === */
+.form-box h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #f9fafb;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox input {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+}
+
+/* === Pulsanti === */
+.btn-primary,
+.btn-outline {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius);
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-outline {
+  background: white;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.full {
+  width: 100%;
+}
+
+/* === Pannelli === */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+
+.price-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  border: none;
-  width: 100%;
-  cursor: pointer;
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
 }
 
-.firma-btn:hover {
-  background-color: #006d7a;
+.crossed {
+  text-decoration: line-through;
+  color: var(--muted);
+  font-size: 14px;
+  margin-left: 10px;
 }
 
-.firma-logo {
-  font-family: Arial, sans-serif;
-  font-weight: 600;
+.promo-price {
+  color: var(--primary-dark);
   font-size: 18px;
-  background: url('https://seeklogo.com/images/D/docusign-logo-7B1F3A1A4F-seeklogo.com.png') no-repeat left center;
-  background-size: 18px;
-  padding-left: 24px;
+  font-weight: bold;
+}
+
+.bonus {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.timer {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* === Barra di caricamento === */
+.progress-container {
+  width: 100%;
+  height: 14px;
+  background-color: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--primary);
+  transition: width 0.2s linear;
+}
+
+.verifica-msg {
+  font-size: 16px;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 10px;
+}
+
+.loader-icon {
+  margin-right: 6px;
+}
+
+/* === Popup Add-On & PDF === */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: var(--primary-dark);
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.modal-content input[type="checkbox"],
+.modal-content input[type="text"] {
+  margin-right: 8px;
+  padding: 6px;
+  font-size: 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.modal-content input[type="text"] {
+  width: 100%;
+  margin-bottom: 12px;
 }
