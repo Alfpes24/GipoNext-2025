@@ -57,11 +57,14 @@ function calcolaPreventivo() {
 
   // Addon
   const addons = Array.from(document.querySelectorAll('.addon:checked')).map(el => {
-    const qty = parseInt(el.dataset.qty || 1);
-    const price = parseFloat(el.dataset.price) || 0;
-    const setup = parseFloat(el.dataset.setup) || 0;
-    return { name: el.dataset.name, price, setup, qty };
-  });
+  const name = el.dataset.name;
+  const price = parseFloat(el.dataset.price) || 0;
+  const setup = parseFloat(el.dataset.setup) || 0;
+  const qtyInput = document.querySelector(`.qty[data-name="${name}"]`);
+  const qty = qtyInput ? parseInt(qtyInput.value || 1) : 1;
+  return { name, price, setup, qty };
+});
+
 
   const addonMens = addons.reduce((sum, a) => sum + a.price * a.qty, 0);
   const addonSetup = addons.reduce((sum, a) => sum + a.setup * a.qty, 0);
